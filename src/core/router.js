@@ -1,25 +1,40 @@
 class Router {
-  routes = {}
+  routes = [];
 
   constructor() {
-    this.defaultCb = () => { };
+    this.defaultRoute = {
+      key: "*",
+      callback: () => { },
+    };
   }
 
   add(path, cb) {
-    this.routes[`${path}`] = cb;
+    this.routes.push({
+      key: path,
+      callback: cb,
+    });
   }
 
   get(path) {
-    return this.routes[`${path}`] || this.defaultCb;
+    const route = this.routes.find(r => (r.key instanceof RegExp && r.key.test(path)) || r.key === path);
+    return route || this.defaultRoute;
+  }
+
+  execute(path) {
+    const route = this.get(path);
+    route?.callback();
   }
 
   setDefault(cb) {
-    this.defaultCb = cb;
+    this.defaultRoute = {
+      key: "*",
+      callback: cb,
+    };
   }
 
   handleRouteChanges() {
     window.addEventListener('popstate', (event) => {
-      this.get(window.location.pathname)()
+      this.execute(window.location.pathname);
     });
 
     const observer = new MutationObserver((mutationList, observer) => {
@@ -29,7 +44,7 @@ class Router {
             e.addEventListener('click', (e) => {
               e.preventDefault();
               history.pushState({}, "", e.target.href);
-              this.get(window.location.pathname)();
+              this.execute(window.location.pathname);
             })
           }
         })
@@ -38,7 +53,7 @@ class Router {
 
     observer.observe(document, { attributes: true, childList: true, subtree: true });
 
-    this.get(window.location.pathname)();
+    this.execute(window.location.pathname);
   }
 }
 
