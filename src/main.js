@@ -3,6 +3,8 @@ import PageNotFound from './pages/pageNotFound';
 import SPA from './core/spa';
 import Page from './pages/page';
 
+import './styles/common.css';
+
 /**
  * Create an instance of SPA
  *
