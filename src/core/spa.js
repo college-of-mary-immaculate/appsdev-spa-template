@@ -1,17 +1,43 @@
 class SPA {
+  /**
+   * @typedef {{
+   *  key: string | RegExp,
+   *  callback: VoidFunction,
+   * }} Route
+   *
+   * @type {Route[]}
+   *
+   */
   routes = [];
 
+  /**
+   * New SPA
+   *
+   * @typedef {{
+   *    root: NodeElement,
+   *    defaultRoute: VoidFunction,
+   * }} SPAConfiguration
+   *
+   * @param {SPAConfiguration}
+   *
+   */
   constructor(config = {}) {
     this.context = {
       root: config?.root || document.getElementById('app'),
     };
 
     this.defaultRoute = {
-      key: "*",
+      key: '*',
       callback: (config?.defaultRoute || (() => { })).bind(this.context),
     };
   }
 
+  /**
+   * Register route
+   *
+   * @param {string|RegExp} path URL path
+   * @param {VoidFunction} cb Callback function
+   */
   add(path, cb) {
     this.routes.push({
       key: path,
@@ -19,35 +45,73 @@ class SPA {
     });
   }
 
+  /**
+   * Get route
+   *
+   * @param {string} path Get route callback using path
+   * @returns {Route} Route
+   *
+   */
   get(path) {
     const route = this.routes.find(r => (r.key instanceof RegExp && r.key.test(path)) || r.key === path);
     return route || this.defaultRoute;
   }
 
+  /**
+   * Execute route
+   *
+   * @param {string} path Window location pathname
+   *
+   */
   execute(path) {
     const route = this.get(path);
-    route?.callback();
+    let params;
+
+    if (route?.key && route?.key instanceof RegExp) {
+      params = route.key.exec(window.location.pathname);
+
+      if (params?.groups && Object.keys(params?.groups).length > 0) {
+        params = params.groups;
+      } else {
+        params = Array.from(params);
+        params?.shift();
+      }
+    }
+
+    route?.callback(params);
   }
 
+  /**
+   * Set default callback
+   *
+   * @param {VoidFunction} cb Route function 
+   *
+   */
   setDefault(cb) {
     this.defaultRoute = {
-      key: "*",
+      key: '*',
       callback: cb,
     };
   }
 
+  /**
+   * Register events
+   *
+   * @returns {void}
+   *
+   */
   handleRouteChanges() {
-    window.addEventListener('popstate', (event) => {
+    window.addEventListener('popstate', () => {
       this.execute(window.location.pathname);
     });
 
-    const observer = new MutationObserver((mutationList, observer) => {
+    const observer = new MutationObserver((mutationList) => {
       mutationList.forEach((mutation) => {
         mutation?.addedNodes?.forEach(e => {
           if (e.nodeName.toLowerCase() === 'a') {
             e.addEventListener('click', (e) => {
               e.preventDefault();
-              history.pushState({}, "", e.target.href);
+              history.pushState({}, '', e.target.href);
               this.execute(window.location.pathname);
             })
           }
