@@ -18,7 +18,7 @@ Vanilla JS SPA Template
 - `public/` Public assets folder
 - `src/`
   - `components/` Components
-  - `core/` Here lives important code (e.g. SPA)
+  - `core/` Important code resides here(e.g. SPA)
   - `icons/` You could place SVG files here
   - `layouts/` Layout functions
   - `pages/` Page functions
