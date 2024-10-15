@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite src/",
-    "build": "vite build --outDir ../dist src",
-    "preview": "vite preview --outDir ./dist"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "vite": "^5.4.8"

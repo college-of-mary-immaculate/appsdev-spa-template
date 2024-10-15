@@ -110,9 +110,18 @@ class SPA {
         mutation?.addedNodes?.forEach(e => {
           if (e.nodeName.toLowerCase() === 'a') {
             e.addEventListener('click', (e) => {
-              e.preventDefault();
-              history.pushState({}, '', e.target.href);
-              this.execute(window.location.pathname);
+              try {
+                const targetUrl = new URL(e.target.href);
+                const target = e.target.getAttribute('target') || '_self';
+
+                if (targetUrl.origin === window.location.origin && target === '_self') {
+                  e.preventDefault();
+                  history.pushState({}, '', e.target.href);
+                  this.execute(window.location.pathname);
+                }
+              } catch (err) {
+                console.error('spa: cannot parse target href', err);
+              }
             })
           }
         })
