@@ -118,6 +118,14 @@ class SPA {
                   e.preventDefault();
                   history.pushState({}, '', e.target.href);
                   this.execute(window.location.pathname);
+
+                  // simulate scroll into
+                  if (targetUrl.hash) {
+                    const focusElem = document.querySelector(targetUrl.hash);
+                    focusElem && setTimeout(focusElem.scrollIntoView(
+                      { behavior: 'smooth', block: 'end', inline: 'nearest' }
+                    ), 500);
+                  }
                 }
               } catch (err) {
                 console.error('spa: cannot parse target href', err);
