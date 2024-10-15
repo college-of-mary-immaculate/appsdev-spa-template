@@ -1,6 +1,11 @@
+import JSLogo from '../icons/javascript.svg';
+
 export default function Welcome(root) {
   const component = document.createElement('h1');
-  component.innerText = 'Welcome to Example App!';
+  component.innerHTML = `
+      <img src="${JSLogo}" alt="Vanilla JavaScript" />
+      Welcome to Example App!
+  `;
 
   root.appendChild(component);
 }
