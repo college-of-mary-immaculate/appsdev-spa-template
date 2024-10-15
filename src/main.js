@@ -1,16 +1,12 @@
-import HomeController from "./controllers/home";
-import PageNotFound from "./controllers/pageNotFound";
-import { Router } from "./core/router"
+import Home from './pages/home'
+import PageNotFound from './pages/pageNotFound';
+import SPA from './core/spa';
 
-const router = new Router();
+const app = new SPA({
+  root: document.getElementById('app'),
+  defaultRoute: PageNotFound,
+});
 
-const homeController = new HomeController();
-const pageNotFoundController = new PageNotFound();
-
-router.add('/', homeController.indexAction.bind(homeController));
-router.add('/login', homeController.loginAction.bind(homeController));
-
-router.setDefault(pageNotFoundController.indexAction.bind(pageNotFoundController));
-
-router.handleRouteChanges();
+app.add('/', Home);
+app.handleRouteChanges();
 

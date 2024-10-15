@@ -1,17 +1,21 @@
-class Router {
+class SPA {
   routes = [];
 
-  constructor() {
+  constructor(config = {}) {
+    this.context = {
+      root: config?.root || document.getElementById('app'),
+    };
+
     this.defaultRoute = {
       key: "*",
-      callback: () => { },
+      callback: (config?.defaultRoute || (() => { })).bind(this.context),
     };
   }
 
   add(path, cb) {
     this.routes.push({
       key: path,
-      callback: cb,
+      callback: cb.bind(this.context),
     });
   }
 
@@ -57,6 +61,4 @@ class Router {
   }
 }
 
-export {
-  Router,
-}
+export default SPA;
