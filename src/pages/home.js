@@ -1,4 +1,4 @@
-import Counter from '../components/counter';
+import Counter from '../components/counter/component.js';
 import Navigation from '../components/navigation';
 import Welcome from '../components/welcome';
 import Layout from '../layouts/default';
