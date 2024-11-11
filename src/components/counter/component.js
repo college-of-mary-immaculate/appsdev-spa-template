@@ -7,7 +7,6 @@ export default function Counter(root) {
   button.innerText = `Click Me (${counter})`;
   button.className = style['counter-btn'];
 
-  console.log(style)
   button.addEventListener('click', () => {
     counter++;
     button.innerText = `Click Me (${counter})`;
