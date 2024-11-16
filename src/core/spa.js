@@ -95,6 +95,35 @@ class SPA {
   }
 
   /**
+   * Handle SPA Clicks
+   * 
+   * @param {HTMLElement} e
+   * 
+   */
+  handleClick(e) {
+    try {
+      const targetUrl = new URL(e.target.href);
+      const target = e.target.getAttribute('target') || '_self';
+
+      if (targetUrl.origin === window.location.origin && target === '_self') {
+        e.preventDefault();
+        history.pushState({}, '', e.target.href);
+        this.execute(window.location.pathname);
+
+        // simulate scroll into
+        if (targetUrl.hash) {
+          const focusElem = document.querySelector(targetUrl.hash);
+          focusElem && setTimeout(focusElem.scrollIntoView(
+            { behavior: 'smooth', block: 'end', inline: 'nearest' }
+          ), 500);
+        }
+      }
+    } catch (err) {
+      console.error('spa: cannot parse target href', err);
+    }
+  }
+
+  /**
    * Register events
    *
    * @returns {void}
@@ -109,28 +138,16 @@ class SPA {
       mutationList.forEach((mutation) => {
         mutation?.addedNodes?.forEach(e => {
           if (e.nodeName.toLowerCase() === 'a') {
-            e.addEventListener('click', (e) => {
-              try {
-                const targetUrl = new URL(e.target.href);
-                const target = e.target.getAttribute('target') || '_self';
+            e.addEventListener('click', this.handleClick.bind(this));
+          } else {
+            // find any links in the container
+            if (typeof e === 'object' && typeof e.getElementsByTagName !== 'undefined') {
+              const as = e.getElementsByTagName('a');
 
-                if (targetUrl.origin === window.location.origin && target === '_self') {
-                  e.preventDefault();
-                  history.pushState({}, '', e.target.href);
-                  this.execute(window.location.pathname);
-
-                  // simulate scroll into
-                  if (targetUrl.hash) {
-                    const focusElem = document.querySelector(targetUrl.hash);
-                    focusElem && setTimeout(focusElem.scrollIntoView(
-                      { behavior: 'smooth', block: 'end', inline: 'nearest' }
-                    ), 500);
-                  }
-                }
-              } catch (err) {
-                console.error('spa: cannot parse target href', err);
+              for (let i = 0; i < as.length; i++) {
+                as[i].addEventListener('click', this.handleClick.bind(this));
               }
-            })
+            }
           }
         })
       })
