@@ -24,6 +24,7 @@ class SPA {
   constructor(config = {}) {
     this.context = {
       root: config?.root || document.getElementById('app'),
+      redirect: this.redirect.bind(this),
     };
 
     this.defaultRoute = {
@@ -92,6 +93,16 @@ class SPA {
       key: '*',
       callback: cb,
     };
+  }
+
+  /**
+   * Use push state
+   * 
+   * @param {string} url 
+   */
+  redirect(url) {
+    history.pushState({}, '', url);
+    this.execute(window.location.pathname);
   }
 
   /**
